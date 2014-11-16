@@ -4,8 +4,20 @@ output: html_document
 ---
 ####Loading and preprocessing the data
 
-```{r, echo=TRUE, results='hide'}
+
+```r
 data <- read.csv("activity.csv", header=TRUE)
+```
+
+```
+## Warning: cannot open file 'activity.csv': No such file or directory
+```
+
+```
+## Error: cannot open the connection
+```
+
+```r
 data$date <- as.Date(data$date)
 ```
 
@@ -13,7 +25,8 @@ data$date <- as.Date(data$date)
 
 ###Question 1: What is mean total number of steps taken per day?
 
-```{r question1, echo=TRUE, results='hide'}
+
+```r
 library(plyr)
 library(ggplot2)
 
@@ -30,35 +43,47 @@ plot1 <- qplot(date, data=output1, weight=check, geom="histogram")
 plot1 + labs(title = "Total number of steps taken by date")  +  labs(x="Date", y="Total Steps")
 ```
 
-####The mean number of steps per day are `r mean1`.
+```
+## stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+```
 
-####The median of number of steps per day is `r median1`.
+![plot of chunk question1](figure/question1.png) 
+
+####The mean number of steps per day are 1.0766 &times; 10<sup>4</sup>.
+
+####The median of number of steps per day is 10765.
 
 
 
 ###Question 2: What is the average daily activity pattern?
 
-```{r, echo=TRUE, results='hide'}
+
+```r
 #Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
 output2 <- ddply(data1, "interval", summarize, check=mean(steps))
 plot(output2$interval,output2$check, type="l", main="Average steps per 5-min interval", xlab="5-min Intervals", ylab="Average number of steps")
+```
 
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2.png) 
+
+```r
 # Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 ans <- subset(output2, output2$check==max(output2$check))
 ```
 
-####The 5-minute interval that  contains the maximum number of steps (on average across all the days in the dataset) is `r ans$interval`
+####The 5-minute interval that  contains the maximum number of steps (on average across all the days in the dataset) is 835
 
 
 
 ###Question 3: Imputing missing values
 
-####Total number of rows with "NAs" are `r sum(is.na(data))`
+####Total number of rows with "NAs" are 2304
 
 The same Histogram of number of steps per day, with all NAs replaced by mean for that day, will be as shown below
 
-```{r, echo=TRUE, results='hide'}
+
+```r
 #Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
 #Create a new dataset that is equal to the original dataset but with the missing data filled in.
@@ -76,21 +101,28 @@ plot2 <- qplot(date, data=output3, weight=check, geom="histogram")
 plot2 + labs(title = "Total number of steps taken by date: replaced missing values")  +  labs(x="Date", y="Total Steps")
 ```
 
-####The mean number of steps per day with imputed NAs becomes `r mean2`.
+```
+## stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+```
 
-####The median of number of steps per day with imputed NAs becomes `r median2`.
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
+
+####The mean number of steps per day with imputed NAs becomes 1.0766 &times; 10<sup>4</sup>.
+
+####The median of number of steps per day with imputed NAs becomes 1.0766 &times; 10<sup>4</sup>.
 
 
 Do these values differ from the estimates from the first part of the assignment? 
 
-####After Imputing NAs, the change in mean value is `r mean1 - mean2` and that of median value is `r median1 - median2`
+####After Imputing NAs, the change in mean value is 0 and that of median value is -1.1887
 
 #####The impact of imputing missing data on the estimates of the total daily number of steps is that while the number on dates with no NAs does not change, the number of steps shown for dates with NAs increases to the imputed value.
 
 
 
 ###Question 4: Are there differences in activity patterns between weekdays and weekends?
-```{r, echo=TRUE, results='hide'}
+
+```r
 # Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day
 
 newdf$weekday <- weekdays(newdf$date)
@@ -111,10 +143,13 @@ colnames(summ)[3] <- "mean"
 
 A time-series plot of average number of steps taken within each of the 5-minute intervals by Weekdays and weekends is shown below
 
-```{r, echo=TRUE, results='hide'}
+
+```r
 library(lattice)
 xyplot(mean ~ interval | weekday, data=summ, layout=c(1,2), type="l", xlab="Interval", ylab="Number of Steps")
 ```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
 
 ####There is a distinct difference in the pattern on average number of steps by weekday vs weekend
 
